@@ -1,0 +1,93 @@
+---
+- name: Instalar y configurar Tomcat en CentOS
+  hosts: centos
+  become: true
+  user: sysadmin
+
+  tasks:
+
+    - name: Descargar Tomcat
+      ansible.builtin.uri:
+        url: https://dlcdn.apache.org/tomcat/tomcat-9/v9.0.73/bin/apache-tomcat-11.0.0-M22.tar.gz
+        dest: /tmp/apache-tomcat-11.0.0-M22.tar.gz
+        method: GET
+
+    - name: Descomprimir Tomcat
+      ansible.builtin.unarchive:
+        src: /tmp/apache-tomcat-11.0.0-M22.tar.gz
+        dest: /opt/
+        remote_scr: true
+
+    - name:  Crear enlace simbolico para Tomcat
+      ansible.builtin.file:
+        src: /opt/apache-tomcat-11.0.0-M22
+        dest: /opt/tomcat
+        state: link
+
+    - name: Crear usuario y grupo para Tomcat
+      ansible.builtin.user:
+        name: tomcat
+        group: tomcat
+        create_home: no
+        shell: /sbin/nologin
+          
+    - name: Establecer permisos en el directorio de Tomcat
+      ansible.builtin.file:
+        path: /opt/tomcat
+        state: directory
+        recurse: true
+        owner: tomcat
+        group: tomcat
+        mode: '0755'
+
+    - name: Configurar Tomcat como servicio
+      ansible.builtin.copy:
+        dest: /etc/systemd/system/tomcat.service
+        content: |
+          Description=Apache Tomcat Web Application Container
+          After=network.target
+
+          [Service]
+          Type=forking
+          User=tomcat
+          Group=tomcat
+          Environment="JAVA_OPTS=-Djava.awt.headless=true -Xms512M -Xmx1024M"
+          Environment="CATALINA_PID=/opt/tomcat/temp/tomcat.pid"
+          Environment="CATALINA_HOME=/opt/tomcat"
+          Environment="CATALINA_BASE=/opt/tomcat"
+          ExecStart=/opt/tomcat/bin/startup.sh
+          ExecStop=/opt/tomcat/bin/shutdown.sh
+          Restart=on-failure
+          
+          [Install]
+          WantedBy=multi-user.target
+
+    - name: Desplegar la aplcación todo.war
+      ansible.builtin.copy:
+        src: /files/todo.war
+        dest: /opt/tomcat/webapps/todo.war
+
+## Configurar los acceso a la base de datos en el archvivo /opt/config/app.properties
+
+    - name: Asegurarse de que el archivo app.properties existe
+      ansible.builtin.file:
+        path: /ruta/del/archivo/app.properties
+        state: touch
+
+    - name: Configurar el acceso a la base de datos en app.properties
+      ansible.builtin.copy:
+        dest: /ruta/del/archivo/app.properties
+        content: |
+          tipoDB=mysql
+          jdbcURL=jdbc:mysql://192.168.56.20:3306/todo
+          jdbcUsername=prueba
+          jdbcPassword=prueba2024
+
+    - name: Iniciar y habilitar Tomcat
+      ansible.builtin.systemd:
+        name: tomcat
+        state: started
+        enabled: true
+
+
+  

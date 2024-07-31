@@ -1,0 +1,43 @@
+---
+- name: Configurar UFW en un servidor Ubuntu
+  hosts: ubuntu
+  become: true
+  user: sysadmin
+
+  tasks:
+
+    - name: UFW instalado
+      ansible.builtin.apt:
+        name: ufw
+        state: present
+
+    - name: Permitir puerto 22 en ufw
+      community.general.ufw:
+        rule: allow
+        name: OpenSSH
+
+    - name: Defino politicas de tráfico entrante
+      community.general.ufw:
+        policy: allow
+        direction: outgoing
+        state: enabled
+
+    - name: Defino politicas de tráfico entrante
+      community.general.ufw:
+        policy: deny
+        direction: incoming
+        state: enabled
+
+    - name: servicio UFW levantado y activo
+      ansible.builtin.systemd_service:
+        name: ufw
+        state: started
+        enabled: true
+
+    - name: Verificar el estado de UFW
+      command: ufw status
+      register: ufw_status
+
+    - name: Mostrar estado de UFW
+      debug:
+        msg: "{{ ufw_status.stdout }}"

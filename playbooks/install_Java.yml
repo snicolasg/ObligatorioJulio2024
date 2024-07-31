@@ -1,0 +1,28 @@
+---
+- name: Instalar JDK de Java en CentOS
+  hosts: centos
+  become: true
+  user: sysadmin
+
+  tasks:
+
+    - name: Actualizar el repositorio EPEL
+      yum:
+        name: epel-release
+        state: latest
+
+    - name: Instalo JDK de Java
+      yum:
+        name: java-1.8.0-openjdk
+        state: latest
+
+    - name: Verifica instalación Java
+      command: java -version
+      register: java_version
+      ignore_errors: true
+
+    - name: Muestra version Java
+      debug:
+        var: java_version.stdout_lines
+  
+
