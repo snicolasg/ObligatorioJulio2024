@@ -7,13 +7,13 @@
   tasks:
 
     - name: Actualizar el repositorio EPEL
-      yum:
+      ansible.builtin.dnf:
         name: epel-release
         state: latest
 
     - name: Instalo JDK de Java
-      yum:
-        name: java-1.8.0-openjdk
+      ansible.builtin.dnf:
+        name: java-21-openjdk-devel
         state: latest
 
     - name: Verifica instalación Java

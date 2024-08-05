@@ -13,14 +13,17 @@
         enabled: yes
 
     - name: Agregamos la regla de firewall de tomcat (puerto 8080)
-      ansible.builtin.service:
+      ansible.builtin.firewalld:
         port: "8080/tcp"
         permanent: true
         state: enabled
-        inmediate: true
         zone: public
+      become: true
 
+  handlers:
+  
     - name: Reload firewalld para aplicar cambios
-      ansible.builtin.service:
+      ansible.builtin.firewalld:
         state: reloaded
-        
+      become: true
+       

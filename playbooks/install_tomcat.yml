@@ -8,7 +8,7 @@
 
     - name: Descargar Tomcat
       ansible.builtin.uri:
-        url: https://dlcdn.apache.org/tomcat/tomcat-9/v9.0.73/bin/apache-tomcat-11.0.0-M22.tar.gz
+        url: https://dlcdn.apache.org/tomcat/tomcat-11/v11.0.0-M22/bin/apache-tomcat-11.0.0-M22.tar.gz
         dest: /tmp/apache-tomcat-11.0.0-M22.tar.gz
         method: GET
 
@@ -16,13 +16,19 @@
       ansible.builtin.unarchive:
         src: /tmp/apache-tomcat-11.0.0-M22.tar.gz
         dest: /opt/
-        remote_scr: true
+        remote_src: true
 
     - name:  Crear enlace simbolico para Tomcat
       ansible.builtin.file:
         src: /opt/apache-tomcat-11.0.0-M22
         dest: /opt/tomcat
         state: link
+
+    - name: Crear usuario y grupo para Tomcat
+      ansible.builtin.group:
+        name: tomcat
+        state: present
+
 
     - name: Crear usuario y grupo para Tomcat
       ansible.builtin.user:
@@ -64,19 +70,19 @@
 
     - name: Desplegar la aplcación todo.war
       ansible.builtin.copy:
-        src: /files/todo.war
+        src: /home/sysadmin/ObligatorioJulio2024/files/todo.war
         dest: /opt/tomcat/webapps/todo.war
 
 ## Configurar los acceso a la base de datos en el archvivo /opt/config/app.properties
 
     - name: Asegurarse de que el archivo app.properties existe
       ansible.builtin.file:
-        path: /ruta/del/archivo/app.properties
+        path: /opt/config/app.properties
         state: touch
 
     - name: Configurar el acceso a la base de datos en app.properties
       ansible.builtin.copy:
-        dest: /ruta/del/archivo/app.properties
+        dest: /opt/config/app.properties
         content: |
           tipoDB=mysql
           jdbcURL=jdbc:mysql://192.168.56.20:3306/todo

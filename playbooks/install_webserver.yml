@@ -13,7 +13,7 @@
 
   - name: Configurar virtualhost
     ansible.builtin.copy: 
-      src: ./files/virtualhost.conf
+      src: /home/sysadmin/ObligatorioJulio2024/files/virtualhost.conf
       dest: /etc/httpd/conf.d
     notify: Reiniciar apache
 
@@ -27,7 +27,7 @@
 
   - name: Copiar pagina indice del sitio
     ansible.builtin.template:
-      src: ./templates/index.j2
+      src: /home/sysadmin/ObligatorioJulio2024/templates/index.j2
       dest: /var/www/ejemplo/html/index.html
       owner: apache
       group: apache

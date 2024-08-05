@@ -35,30 +35,30 @@
 
 ##  Configuracion de la base de datos
 
-    - name: Vemos si la base de datos existe
-      community.mysql.mysql_db:
-        #login_host: "{{ hostvars[inventory_hostname].ansible_host }}"
-        login_host: ubuntu
-        login_user: root
-        login_password: dbadmin
-        name: todo
-        state: present
-      register: db_exists
+          #    - name: Vemos si la base de datos existe
+          #      community.mysql.mysql_db:
+          #        login_host: "{{ hostvars[inventory_hostname].ansible_host }}"
+          #        name: todo
+          #        state: present
+          #        login_user: root
+          #        login_password: 'dbadmin'
+          #      register: db_exists
 
 
     - name: Creo la base de datos todo
       community.mysql.mysql_db:
         check_implicit_admin: true
-        #login_host: "{{ hostvars[inventory_hostname].ansible_host }}"
-        login_host: ubuntu
+        login_host: "{{ hostvars[inventory_hostname].ansible_host }}"
         login_user: root
-        login_password: dbadmin
+        login_password: ""
         name: todo
         state: import
         target: ./files/todo.sql
+        encoding: utf8mb4
+        collation: utf8mb4_0900_ai_ci
       delegate_to: localhost
       connection: local
-      when: not db_exists.changed
+        #      when: not db_exists.changed
 
   handlers:
 
