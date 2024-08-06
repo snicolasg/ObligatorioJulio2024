@@ -24,11 +24,11 @@
       state: present
     when: ansible_python_version is version('3.0', '>=')
 
-  - name: Instalar mysqlclient y PyMySQL para Python 3.X
-    ansible.builtin.pip:
-      name: 
-        - mysqlclient
-        - PyMySQL
-      executable: pipx
-    when: ansible_python_version is version('3.0', '>=')
+      #  - name: Instalar mysqlclient y PyMySQL para Python 3.X
+      #    ansible.builtin.pip:
+      #      name: 
+        #- mysqlclienti
+        # - PyMySQL
+        #      executable: pipx
+        #    when: ansible_python_version is version('3.0', '>=')
 
