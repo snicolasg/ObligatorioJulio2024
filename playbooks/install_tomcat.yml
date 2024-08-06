@@ -82,6 +82,12 @@
         dest: /opt/tomcat/webapps/todo.war
 
 ## Configurar los acceso a la base de datos en el archvivo /opt/config/app.properties
+    - name: Crear directorio /opt/config
+      file:
+        path: /opt/config
+        state: directory
+        mode: '0755'
+
 
     - name: Asegurarse de que el archivo app.properties existe
       ansible.builtin.file:
