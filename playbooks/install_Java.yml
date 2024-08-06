@@ -13,16 +13,7 @@
 
     - name: Instalo JDK de Java
       ansible.builtin.dnf:
-        name: java-21-openjdk-devel
+        #name: java-21-openjdk-devel
+        name: " {{ java_version }}"
         state: latest
-
-    - name: Verifica instalación Java
-      command: java -version
-      register: java_version
-      ignore_errors: true
-
-    - name: Muestra version Java
-      debug:
-        var: java_version.stdout_lines
-  
 
